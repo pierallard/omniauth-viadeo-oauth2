@@ -9,13 +9,15 @@ module OmniAuth
       # This is where you pass the options you would pass when
       # initializing your consumer from the OAuth gem.
       option :client_options, {
-        :site => 'https://api.viadeo.com',
-        :authorize_url => 'https://www.viadeo.com/uas/oauth2/authorization?response_type=code',
-        :token_url => 'https://www.viadeo.com/uas/oauth2/accessToken'
+        :site => 'https://api.viadeo.com/',
+        :authorize_url => 'https://secure.viadeo.com/oauth-provider/authorize2?response_type=code',
+          #display=popup&
+          #lang=en&
+        :token_url => 'https://www.linkedin.com/uas/oauth2/accessToken'
       }
 
-      option :scope, 'r_basicprofile r_emailaddress'
-      option :fields, ['id', 'email-address', 'first-name', 'last-name', 'headline', 'location', 'industry', 'picture-url', 'public-profile-url']
+#      option :scope, 'r_basicprofile r_emailaddress'
+#      option :fields, ['id', 'email-address', 'first-name', 'last-name', 'headline', 'location', 'industry', 'picture-url', 'public-profile-url']
 
       # These are called after authentication has succeeded. If
       # possible, you should try to set the UID without making
@@ -56,16 +58,10 @@ module OmniAuth
       end
 
       def raw_info
-        @raw_info ||= access_token.get("/v1/people/~:(#{option_fields.join(',')})?format=json").parsed
+        @raw_info ||= access_token.get("/v1/people/~:(#{options.fields.join(',')})?format=json").parsed
       end
 
       private
-
-      def option_fields
-        fields = options.fields
-        fields.map! { |f| f == "picture-url" ? "picture-url;secure=true" : f } if !!options[:secure_image_url]
-        fields
-      end
 
       def user_name
         name = "#{raw_info['firstName']} #{raw_info['lastName']}".strip
@@ -74,5 +70,3 @@ module OmniAuth
     end
   end
 end
-
-OmniAuth.config.add_camelization 'viadeo', 'Viadeo'
