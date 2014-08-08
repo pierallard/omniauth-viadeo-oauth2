@@ -1,0 +1,2 @@
+omniauth-viadeo-oauth2
+======================
